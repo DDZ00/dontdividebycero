@@ -30,6 +30,67 @@ By completing the three cycles, students practise:
 
 ---
 
+## Syllabus — pandas cheatsheet
+
+Every pandas command used across the three cycles, what it does, and where it appears. This is the explicit content being taught.
+
+### Loading and inspecting data
+
+| Command | What it does | Cycle |
+|---|---|---|
+| `pd.read_csv('network_logs.csv')` | Load a CSV file into a DataFrame (a table). | 1, 2, 3 |
+| `df.head()` | Show the first 5 rows to preview the data. | 1, 2, 3 |
+| `len(df)` | Count how many rows there are. | 1, 3 |
+
+### Filtering rows (boolean conditions)
+
+| Command | What it does | Cycle |
+|---|---|---|
+| `df[df['col'] == value]` | Keep only the rows where a column equals a value. | 1, 2, 3 |
+| `df[(cond1) & (cond2)]` | Combine conditions with **AND** — both must be true. | 1 |
+| `df['col'].isin(list)` | Test whether each value is in a list; used to keep matching rows. | 2 |
+| `df['col'].str.startswith('ENC:', na=False)` | Keep rows whose text starts with a given prefix. | 1, 2 |
+| `df.copy()` | Make an independent copy before adding columns (avoids warnings). | 3 |
+
+### Descriptive statistics
+
+| Command | What it does | Cycle |
+|---|---|---|
+| `series.mean()` | The **mean** (average) of a column. | 3 |
+| `series.median()` | The **median** (middle value when sorted). | 1, 2 |
+| `series.mode()` | The **mode** (most frequent value). | 1, 2, 3 |
+| `series.abs()` | Absolute value — distance ignoring the sign. | 3 |
+
+### Frequencies and uniqueness
+
+| Command | What it does | Cycle |
+|---|---|---|
+| `series.value_counts()` | Count how many times each value appears. | 2, 3 |
+| `series.nunique()` | Count how many **distinct** values there are. | 1 |
+| `counts[counts == 1]` | Filter a counts table to values that appear exactly once. | 2 |
+| `counts[counts >= 2]` | Filter a counts table to values that appear two or more times. | 3 |
+| `(series == 1).sum()` | Count how many entries meet a condition (True counts as 1). | 2 |
+
+### Selecting specific rows and values
+
+| Command | What it does | Cycle |
+|---|---|---|
+| `series.iloc[0]` | Get a value by **position** (here, the first one). | 1, 2, 3 |
+| `df.loc[row, 'col']` | Get a value by **label/index** and column name. | 1 |
+| `series.idxmax()` | The index (label) of the **maximum** value. | 1 |
+| `series.idxmin()` | The index (label) of the **minimum** value. | 3 |
+| `df.sort_values('col', ascending=False)` | Sort rows by a column — used to find the largest or most recent. | 3 |
+
+### Transforming data
+
+| Command | What it does | Cycle |
+|---|---|---|
+| `df['new_col'] = ...` | Create a new column. | 3 |
+| `series.apply(func)` | Run a function on every value (here, hashing each timestamp). | 3 |
+| `series - value` | Vectorised arithmetic — operate on a whole column at once. | 3 |
+
+---
+
 ## What makes it innovative
 
 | Principle | How the game delivers it |
