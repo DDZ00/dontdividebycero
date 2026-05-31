@@ -99,7 +99,7 @@ Every pandas command used across the three cycles, what it does, and where it ap
 | **AI-resistant by design** | A chatbot can't shortcut it without actually doing the data work. |
 | **Self-validating feedback** | Correct maths gives a readable message; wrong maths gives noise. No marking required. |
 | **Narrative and motivation** | A light cyber-mystery turns "calculate the median" into "find patient zero." |
-| **Progressive scaffolding** | Cycle 1 is fully solved as a worked example; Cycles 2 and 3 are guided fill-in-the-blanks. |
+| **Progressive scaffolding** | All three cycles are guided fill-in-the-blanks with one-line hints, building from simpler to harder statistics. |
 | **Reusable and remixable** | Change one seed to get a fresh dataset; same gameplay, no two classes identical. |
 
 ---
@@ -119,7 +119,7 @@ This resource is built to teach *with* AI responsibly, not to outsource thinking
 
 | File | Audience | Purpose |
 |---|---|---|
-| `cycle_1.ipynb` | Student | **The Fallen User** — fully worked example; learn the pattern. |
+| `cycle_1.ipynb` | Student | **The Fallen User** — first challenge (fill the blanks); introduces the core pattern. |
 | `cycle_2.ipynb` | Student | **The Busy IP** — guided practice (fill the blanks). |
 | `cycle_3.ipynb` | Student | **The Zeta Outlier** — final challenge (fill the blanks). |
 | `tutor_tools.py` | Student | Helper module: `decrypt_message()` (toy RSA) and `sha256_hex()` (hashing). Imported by every notebook. |
@@ -163,7 +163,7 @@ jupyter lab        # then open cycle_1.ipynb
 
 ## Teacher notes
 
-- **Suggested flow:** demo `cycle_1.ipynb` together as a class (it's solved), then let students attempt `cycle_2` and `cycle_3` in pairs.
+- **Suggested flow:** work through `cycle_1.ipynb` together as a class to establish the pattern, then let students attempt `cycle_2` and `cycle_3` in pairs.
 - **Answer key:** all expected values and messages are in `walkthrough.json`.
 - **Remix for a fresh run / anti-plagiarism:** edit `walkthrough.json`, then regenerate:
   ```bash
@@ -172,7 +172,7 @@ jupyter lab        # then open cycle_1.ipynb
   - Change `random_seed` for a different-looking dataset with identical gameplay (great for a new cohort).
   - Change `rows_trap` for more/fewer decoys to tune difficulty.
   - Change the primes or `plain_message` (the generator re-encrypts and validates that each statistic still produces the declared key).
-- **Differentiation:** stronger students can be asked to *explain why* each statistic is robust to the trap rows; others can lean on the worked Cycle 1.
+- **Differentiation:** stronger students can be asked to *explain why* each statistic is robust to the trap rows; others can lean on the in-cell hints and the class walkthrough of Cycle 1.
 
 ---
 

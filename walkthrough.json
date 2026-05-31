@@ -1,13 +1,13 @@
 {
   "_meta": {
     "title": "Hijacked Network Walkthrough (toy-RSA edition)",
-    "description": "Spec autoritativo del juego. Los primos NO estan escritos en el CSV: cada p/q/e ES el resultado de una operacion estadistica. El alumno NO ve este archivo, solo el CSV y el notebook.",
-    "narrative_intro": "Un AI Agentic Tutor de matematicas dividio por cero y se volvio loco. Tu red esta hijackeada hasta que demuestres dominio de estadistica. Cada ciclo desbloquea un mensaje encriptado con RSA de juguete. Tres ciclos. Una verdad final.",
+    "description": "Authoritative spec for the game. The primes are NOT written in the CSV: each p/q/e IS the result of a statistical operation. The student does NOT see this file, only the CSV and the notebook.",
+    "narrative_intro": "An AI Agentic maths tutor divided by zero and went insane. Your network is hijacked until you prove your mastery of statistics. Each cycle unlocks a message encrypted with toy RSA. Three cycles. One final truth.",
     "version": "2.0-toy",
     "rows_total": 1000,
     "rows_trap": 100,
     "random_seed": 42,
-    "crypto_note": "RSA de juguete, caracter por caracter. Cada caracter del mensaje se cifra como c = ord(char)^e mod n, con n=p*q. El payload ENC: es una lista de enteros separados por coma."
+    "crypto_note": "Toy RSA, character by character. Each character of the message is encrypted as c = ord(char)^e mod n, with n=p*q. The ENC: payload is a comma-separated list of integers."
   },
 
   "schema": {
@@ -20,13 +20,13 @@
       "node_sigma_09", "node_theta_10", "node_lambda_11", "node_psi_12"
     ],
     "payload_info_kinds": [
-      "empty - cadena vacia o '-' (mayoria del ruido)",
-      "hash_only - hex SHA256 random (red herring)",
+      "empty - empty string or '-' (most of the noise)",
+      "hash_only - random hex SHA256 (red herring)",
       "checksum - 'CHK:<8 hex>'",
       "session - 'SES:<random>'",
-      "encrypted_msg - 'ENC:<n1>,<n2>,...' lista de enteros (mensaje del ciclo)"
+      "encrypted_msg - 'ENC:<n1>,<n2>,...' list of integers (the cycle's message)"
     ],
-    "no_primes_in_payload": "IMPORTANTE: a diferencia de versiones previas, los primos p/q/e NO aparecen literalmente en ninguna fila. Salen de calculos estadisticos. Lo unico cifrado-relacionado en el payload es ENC:."
+    "no_primes_in_payload": "IMPORTANT: unlike previous versions, the primes p/q/e do NOT appear literally in any row. They come from statistical calculations. The only encryption-related thing in the payload is ENC:."
   },
 
   "rsa_keys": [
@@ -36,28 +36,28 @@
   ],
 
   "cycle_1": {
-    "name": "El UserID Caido",
-    "story": "El log muestra muchos intentos fallidos de conexion. Un usuario en particular falla mas que ninguno: es la victima patient zero. Estadistica basica sobre sus datos y sobre los exitos globales te da las tres claves.",
+    "name": "The Fallen UserID",
+    "story": "The log shows many failed connection attempts. One user in particular fails more than anyone else: it is patient zero, the victim. Basic statistics on their data and on the global successes give you the three keys.",
     "victim_user_id": 31415,
     "derive_p": {
-      "rule": "MEDIANA de bytes_up del usuario victima. Da 211.",
+      "rule": "MEDIAN of the victim user's bytes_up. Gives 211.",
       "value": 211,
       "victim_bytes_up_list": [50, 80, 120, 150, 180, 211, 240, 260, 300, 400, 500],
-      "_comment": "11 valores; el del medio (ordenado, indice 5) es 211. Son 11 filas para que tambien nunique(node)=11."
+      "_comment": "11 values; the middle one (sorted, index 5) is 211. There are 11 rows so that nunique(node)=11 as well."
     },
     "derive_q": {
-      "rule": "MODA de bytes_up entre las filas con action='connection_success'. Da 307.",
+      "rule": "MODE of bytes_up among the rows with action='connection_success'. Gives 307.",
       "value": 307,
       "occurrences": 9,
-      "_comment": "9 filas success con bytes_up=307; ningun otro valor de bytes_up en success se repite tanto."
+      "_comment": "9 success rows with bytes_up=307; no other bytes_up value in success repeats as much."
     },
     "derive_e": {
-      "rule": "Cantidad de nodos UNICOS (distintos) que uso el usuario victima: df[df.user_id==victim]['node'].nunique(). Da 11.",
+      "rule": "Number of UNIQUE (distinct) nodes the victim user used: df[df.user_id==victim]['node'].nunique(). Gives 11.",
       "value": 11,
-      "_comment": "Las 11 filas de la victima estan cada una en un nodo distinto (11 nodos del pool de 12) -> nunique(node)=11."
+      "_comment": "The victim's 11 rows are each on a distinct node (11 of the 12 nodes in the pool) -> nunique(node)=11."
     },
     "message_carrier": {
-      "rule": "La fila que tiene el mensaje ENC: pertenece al MISMO user_id que tuvo el max bytes_up entre success.",
+      "rule": "The row holding the ENC: message belongs to the SAME user_id that had the max bytes_up among success.",
       "max_success_user_id": 27182,
       "payload_prefix": "ENC:"
     },
@@ -66,28 +66,28 @@
   },
 
   "cycle_2": {
-    "name": "La IP Concurrida",
-    "story": "El mensaje del ciclo 1 te dio una IP. Filtra por ella y trabaja ese subconjunto: moda, mediana sobre nodos unicos, y conteo de timestamps unicos.",
+    "name": "The Busy IP",
+    "story": "The cycle 1 message gave you an IP. Filter by it and work on that subset: mode, median over unique nodes, and a count of unique timestamps.",
     "target_ip": "192.168.42.7",
     "rows_at_target_ip": 16,
     "derive_p": {
-      "rule": "MODA de bytes_up en el subset de la IP. Da 233.",
+      "rule": "MODE of bytes_up in the IP subset. Gives 233.",
       "value": 233,
       "occurrences": 5
     },
     "derive_q": {
-      "rule": "MEDIANA de bytes_up de las filas cuyo node aparece UNA sola vez en el subset (nodos unicos). Da 277.",
+      "rule": "MEDIAN of bytes_up of the rows whose node appears only ONCE in the subset (unique nodes). Gives 277.",
       "value": 277,
       "unique_node_bytes_list": [200, 277, 350],
-      "_comment": "3 filas con nodos unicos, bytes [200,277,350], mediana=277."
+      "_comment": "3 rows with unique nodes, bytes [200,277,350], median=277."
     },
     "derive_e": {
-      "rule": "Cantidad de timestamps UNICOS (que aparecen una sola vez) en el subset de la IP. Da 5.",
+      "rule": "Number of UNIQUE timestamps (appearing only once) in the IP subset. Gives 5.",
       "value": 5,
-      "_comment": "5 filas con timestamp unico en el subset."
+      "_comment": "5 rows with a unique timestamp in the subset."
     },
     "message_carrier": {
-      "rule": "La fila ENC: esta en el user_id que MAS se repite dentro del subset de la IP (moda de user_id del subset).",
+      "rule": "The ENC: row is in the user_id that repeats the MOST within the IP subset (mode of user_id in the subset).",
       "modal_user_id_in_subset": 50505,
       "payload_prefix": "ENC:"
     },
@@ -97,29 +97,29 @@
   },
 
   "cycle_3": {
-    "name": "El Outlier del Zeta",
-    "story": "Ultimo ciclo. Filtra por el server, hashea los timestamps (SHA256) y filtra por el hash del timestamp magico. En ese subset: moda, frecuencias y conteo.",
+    "name": "The Zeta Outlier",
+    "story": "Last cycle. Filter by the server, hash the timestamps (SHA256) and filter by the hash of the magic timestamp. In that subset: mode, frequencies and count.",
     "target_node": "node_zeta_07",
     "magic_timestamp": "2024-08-15 03:14:15",
     "magic_timestamp_sha256": "a7b8f6c4be155ac8fbe9be0993ad4fc82faccf69d856a2e8992c80ebb3f183e2",
     "subset_size": 7,
     "derive_p": {
-      "rule": "MODA de bytes_up en el subset (hash-matched). Da 151.",
+      "rule": "MODE of bytes_up in the subset (hash-matched). Gives 151.",
       "value": 151,
       "occurrences": 3
     },
     "derive_q": {
-      "rule": "El bytes_up MENOS frecuente que NO sea unico (aparece >=2 veces, con el conteo minimo). Da 199.",
+      "rule": "The LEAST frequent bytes_up that is NOT unique (appears >=2 times, with the minimum count). Gives 199.",
       "value": 199,
       "occurrences": 2
     },
     "derive_e": {
-      "rule": "Cantidad de filas del subset hash-matched: len(subset). Da 7.",
+      "rule": "Number of rows in the hash-matched subset: len(subset). Gives 7.",
       "value": 7
     },
     "subset_bytes_up": [151, 151, 151, 199, 199, 88, 500],
     "message_carrier": {
-      "rule": "La fila ENC: final esta en el user_id del OUTLIER del subset (bytes_up mas alejado de la media). Se toma la fila mas reciente de ese user_id en TODO el dataset.",
+      "rule": "The final ENC: row is in the user_id of the subset's OUTLIER (bytes_up farthest from the mean). Take the most recent row of that user_id in the WHOLE dataset.",
       "outlier_bytes_up": 500,
       "outlier_user_id": 99999,
       "extra_recent_row_timestamp": "2024-12-31 23:59:59",
@@ -130,14 +130,14 @@
 
   "_authoring_notes": {
     "edit_to_remix": [
-      "Cambiar 'random_seed' produce un CSV con orden y ruido distintos pero gameplay identico.",
-      "Cambiar 'rows_trap' ajusta dificultad.",
-      "Para cambiar los primos: editar rsa_keys Y los derive_* (las listas de bytes que producen cada estadistica). El generador valida que las operaciones den los primos declarados.",
-      "Los plain_message se pueden reescribir; el generador los cifra automaticamente caracter por caracter. OJO: cada caracter debe tener ord(c) < n del ciclo (n mas chico es 30049, asi que cualquier caracter ASCII/latino entra)."
+      "Changing 'random_seed' produces a CSV with different order and noise but identical gameplay.",
+      "Changing 'rows_trap' adjusts the difficulty.",
+      "To change the primes: edit rsa_keys AND the derive_* fields (the byte lists that produce each statistic). The generator validates that the operations yield the declared primes.",
+      "The plain_message values can be rewritten; the generator encrypts them automatically character by character. NOTE: each character must have ord(c) < n of the cycle (the smallest n is 30049, so any ASCII/Latin character fits)."
     ],
     "trap_strategy": [
-      "Como ya NO hay primos en el payload, las trampas son: payloads ENC: con listas de enteros basura (no descifran a nada legible), HASH= y CHK: red herrings.",
-      "El alumno no puede 'grepear' primos porque no existen como texto: la unica via es la estadistica."
+      "Since there are NO primes in the payload anymore, the traps are: ENC: payloads with junk integer lists (they don't decrypt to anything readable), HASH= and CHK: red herrings.",
+      "The student cannot 'grep' for primes because they don't exist as text: the only way is statistics."
     ]
   }
 }
